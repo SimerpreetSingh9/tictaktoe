@@ -60,7 +60,7 @@ public class GameUI extends JFrame	{
 				if(position.isGameOver())
 				{
 					String message = position.isGameWonBy('x') ? YOU_WIN : 
-				    position.isGameWonBy('o') ? COMPUTER_WIN : DRAW;
+									 position.isGameWonBy('o') ? COMPUTER_WIN : DRAW;
 					JOptionPane.showMessageDialog(null, message); 
 				}
 			}
