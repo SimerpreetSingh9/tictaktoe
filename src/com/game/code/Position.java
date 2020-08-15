@@ -15,7 +15,14 @@ public class Position {
 			board[i]=' ';
 		}
 	}
-
+	
+	public Position move(int index)
+	{
+		board[index] = turn;
+		turn = turn == 'x' ? 'o' : 'x';
+		return this;
+	}
+	
 	@Override
 	public String toString()
 	{
