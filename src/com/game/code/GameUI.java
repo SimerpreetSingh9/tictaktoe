@@ -18,7 +18,7 @@ public class GameUI extends JFrame	{
 	private static final String YOU_WIN = "You WON the game";
 	private static final long serialVersionUID = 1L;
 	Position position = new Position();
-	JButton[] buttons = new JButton[Position.SIZE];
+	JButton[] buttons = new JButton[Position.BOARDSIZE];
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			
@@ -38,7 +38,7 @@ public class GameUI extends JFrame	{
 	}
 
 	private void createLayout() {
-		for(int i = 0; i< Position.SIZE; i++)
+		for(int i = 0; i< Position.BOARDSIZE; i++)
 		{
 			final JButton button = createButton();
 			buttons[i] = button;
@@ -51,7 +51,7 @@ public class GameUI extends JFrame	{
 		button.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				button.setText(Character.toString(position.turn));
+				button.setText(Character.toString(position.playerTurn));
 				position.move(idx);
 				if(!position.isGameOver())
 				{
@@ -67,7 +67,7 @@ public class GameUI extends JFrame	{
 
 			private void computeBestMove() {
 				int bestMoveIdx = position.bestMove();
-				buttons[bestMoveIdx].setText(Character.toString(position.turn));
+				buttons[bestMoveIdx].setText(Character.toString(position.playerTurn));
 				position.move(bestMoveIdx);
 			}
 		});

@@ -10,51 +10,56 @@ import java.util.Map;
 public class Position {
 
 	public static final int DIMENSION = 3;
-	public static final int SIZE = DIMENSION*DIMENSION;
-	public char turn;
-	public char[] board;
+	public static final int BOARDSIZE = DIMENSION*DIMENSION;
+	public char playerTurn;
+	public char[] ticTacToeBoard;
 	private Map<Integer, Integer> cache = new HashMap<Integer, Integer>();
-	
+
 	public Position() {
-		this.turn = 'x';
-		board = new char[SIZE];
-		for(short i=0 ; i< SIZE; i++)
+		this.playerTurn = 'x';
+		ticTacToeBoard = new char[BOARDSIZE];
+		initializeTicTacToeBoard();
+	}
+
+
+	private void initializeTicTacToeBoard() {
+		for(int i=0 ; i< BOARDSIZE; i++)
 		{
-			board[i]=' ';
+			ticTacToeBoard[i]=' ';
 		}
 	}
 	
 	
 	public Position(String board, char turn) {
-		this.board = board.toCharArray();
-		this.turn = turn;
+		this.ticTacToeBoard = board.toCharArray();
+		this.playerTurn = turn;
 	}
 
 
 	public Position move(int index)
 	{
-		board[index] = turn;
-		turn = turn == 'x' ? 'o' : 'x';
+		ticTacToeBoard[index] = playerTurn;
+		playerTurn = playerTurn == 'x' ? 'o' : 'x';
 		return this;
 	}
 	
 	@Override
 	public String toString()
 	{
-		return new String(board);
+		return new String(ticTacToeBoard);
 	}
 
 	public Position unmove(int index) {
-		board[index] = ' ';
-		turn = turn == 'x' ? 'o' : 'x';
+		ticTacToeBoard[index] = ' ';
+		playerTurn = playerTurn == 'x' ? 'o' : 'x';
 		return this;
 	}
 	
 	public List<Integer> possibleMoves() {
 		List<Integer> listOfInt = new ArrayList<Integer>();
-		for (int i = 0; i < board.length; i++)
+		for (int i = 0; i < ticTacToeBoard.length; i++)
 		{
-			if (board[i] == ' ')
+			if (ticTacToeBoard[i] == ' ')
 				listOfInt.add(i);
 		}
 		return listOfInt;
@@ -63,17 +68,17 @@ public class Position {
 	public boolean isGameWonBy(char turn) {
 		boolean isWin = false;
 		// test win for xxx in row
-		for(int i=0; i< SIZE ; i+= DIMENSION) {
+		for(int i=0; i< BOARDSIZE ; i+= DIMENSION) {
 			isWin = isWin || MatchALine(turn, i, i+DIMENSION , 1);
 		}
 		// test win for xxx in column
 		for(int i=0; i< DIMENSION ; i++) {
-			isWin = isWin || MatchALine(turn, i, SIZE , DIMENSION);
+			isWin = isWin || MatchALine(turn, i, BOARDSIZE , DIMENSION);
 		}
 		// test for diagonal
-		isWin = isWin || MatchALine(turn, 0, SIZE, DIMENSION+1);
+		isWin = isWin || MatchALine(turn, 0, BOARDSIZE, DIMENSION+1);
 		// test for diagonal
-		isWin = isWin || MatchALine(turn, DIMENSION-1, SIZE-1, DIMENSION-1);
+		isWin = isWin || MatchALine(turn, DIMENSION-1, BOARDSIZE-1, DIMENSION-1);
 		return isWin;
 	}
 
@@ -81,7 +86,7 @@ public class Position {
 	private boolean MatchALine(char turn, int startIndex, int endIndex, int step) {
 		for(int i= startIndex; i < endIndex; i+= step)
 		{
-			if(board[i] != turn)
+			if(ticTacToeBoard[i] != turn)
 				return false;
 		}
 		return true;
@@ -89,9 +94,9 @@ public class Position {
 
 	public int blanks() {
 		int total = 0;
-		for(int i=0; i< SIZE; i++)
+		for(int i=0; i< BOARDSIZE; i++)
 		{
-			if(board[i] == ' ')
+			if(ticTacToeBoard[i] == ' ')
 				total++;
 		}
 	return total;
@@ -115,19 +120,19 @@ public class Position {
 			unmove(idx);
 		}
 		// handle  0 recursion cases
-		value = turn == 'x' ? Collections.max(list) : Collections.min(list);
+		value = playerTurn == 'x' ? Collections.max(list) : Collections.min(list);
 		cache.put(key, value);
 		return value;
 	}
 	public int code()
 	{
 		int value = 0;
-		for(int i = 0; i< SIZE; i++)
+		for(int i = 0; i< BOARDSIZE; i++)
 		{
 			value = value*3; 
-			if(board[i]=='x')
+			if(ticTacToeBoard[i]=='x')
 				value +=1;
-			else if(board[i] == 'o')
+			else if(ticTacToeBoard[i] == 'o')
 				value+=2;
 		}
 		return value;
@@ -145,7 +150,7 @@ public class Position {
 			}
 		};
 		List<Integer> list = possibleMoves();
-		return turn == 'x' ? Collections.max(list, cmp) : Collections.min(list, cmp);
+		return playerTurn == 'x' ? Collections.max(list, cmp) : Collections.min(list, cmp);
 		
 	}
 

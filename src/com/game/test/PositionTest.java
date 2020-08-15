@@ -7,6 +7,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -14,29 +16,38 @@ import com.game.code.Position;
 
 class PositionTest {
 
+	private Position position;
+
+	@BeforeEach
+	public void initializePosition() {
+		this.position = new Position();
+	}
+	
+	@AfterEach
+	public void clearPosition() {
+		this.position = null;
+	}
+	
 	@Test
 	@DisplayName("Testing new position")
 	void testNewPosition() throws Exception {
-		Position position = new Position();
-		assertEquals('x', position.turn);
+		assertEquals('x', position.playerTurn);
 		assertEquals("         ", position.toString());
 	}
 	
 	@Test
 	@DisplayName("Testing move by x at index 1")
 	void testMove() throws Exception {
-		Position position = new Position();
 		position = position.move(1);
-		assertEquals('o', position.turn);
+		assertEquals('o', position.playerTurn);
 		assertEquals(" x       ", position.toString());
 	}
 	
 	@Test
 	@DisplayName("Testing unmove by x at index 1")
 	public void testUnmove() throws Exception{
-		Position position = new Position();
 		position = position.move(1).unmove(1);
-		assertEquals('x', position.turn);
+		assertEquals('x', position.playerTurn);
 		assertEquals("         ", position.toString());
 	}
 	
@@ -44,8 +55,7 @@ class PositionTest {
 	@DisplayName("Testing possible moves")
 	public void testPossibleMoves() throws Exception {
 		List<Integer> listOfInt = new ArrayList<Integer>();
-		Position position = new Position();
-		for( int i=0; i< position.SIZE;i++) {
+		for( int i=0; i< position.BOARDSIZE;i++) {
 			listOfInt.add(i);
 		}
 		listOfInt.remove(new Integer(1));
@@ -57,7 +67,7 @@ class PositionTest {
 	@DisplayName("Testing if game is won as per possible moves")
 	public void testIsGameWonBy() throws Exception {
 
-		assertFalse(new Position().isGameWonBy('x'));
+		assertFalse(position.isGameWonBy('x'));
 		//testing for win xxx in a row
 		assertTrue(new Position("xxx      ",'x').isGameWonBy('x'));
 		//testing for win xxx in column
@@ -85,10 +95,9 @@ class PositionTest {
 		assertEquals(-6, new Position("ooo      ",'o').minmax());
 		// zero if draw
 		assertEquals(0, new Position("xoxxoxoxo",'x').minmax());
-		
 		// test recursive cases
 		assertEquals(6, new Position("xx       ",'x').minmax());
-		// neg value if win for o
+		// negative value if win for o
 	   assertEquals(-6, new Position("oo       ",'o').minmax());
 	}
 	@Test
@@ -103,5 +112,13 @@ class PositionTest {
 		assertTrue(new Position("xxx      ",'x').isGameOver());
 		assertTrue(new Position("ooo      ",'x').isGameOver());
 		assertTrue(new Position("xoxxoxoxo",'x').isGameOver());
+	}
+
+	public Position getPosition() {
+		return position;
+	}
+
+	public void setPosition(Position position) {
+		this.position = position;
 	}
 }
