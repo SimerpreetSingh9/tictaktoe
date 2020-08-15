@@ -2,7 +2,10 @@ package com.game.code;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Position {
 
@@ -10,7 +13,8 @@ public class Position {
 	public static final int SIZE = DIMENSION*DIMENSION;
 	public char turn;
 	public char[] board;
-
+	private Map<Integer, Integer> cache = new HashMap<Integer, Integer>();
+	
 	public Position() {
 		this.turn = 'x';
 		board = new char[SIZE];
@@ -93,6 +97,11 @@ public class Position {
 	return total;
 	}
 	public int minmax() {
+		// implemnting caching
+		Integer key = code();
+		Integer value = cache.get(key);
+		if(value != null) return value;
+		
 		if(isGameWonBy('x')) 
 			return blanks();
 		if(isGameWonBy('o')) 
@@ -106,6 +115,42 @@ public class Position {
 			unmove(idx);
 		}
 		// handle  0 recursion cases
-		return turn == 'x' ? Collections.max(list) : Collections.min(list);
+		value = turn == 'x' ? Collections.max(list) : Collections.min(list);
+		cache.put(key, value);
+		return value;
+	}
+	public int code()
+	{
+		int value = 0;
+		for(int i = 0; i< SIZE; i++)
+		{
+			value = value*3; 
+			if(board[i]=='x')
+				value +=1;
+			else if(board[i] == 'o')
+				value+=2;
+		}
+		return value;
+	}
+
+
+	public int bestMove() {
+		Comparator<Integer> cmp = new Comparator<Integer>() {
+			public int compare(Integer first, Integer second) {
+				int a = move(first).minmax();
+				unmove(first);
+				int b = move(second).minmax();
+				unmove(second);
+				return a-b;
+			}
+		};
+		List<Integer> list = possibleMoves();
+		return turn == 'x' ? Collections.max(list, cmp) : Collections.min(list, cmp);
+		
+	}
+
+
+	public boolean isGameOver() {
+		return isGameWonBy('x') || isGameWonBy('o') || blanks() == 0;
 	}
 }

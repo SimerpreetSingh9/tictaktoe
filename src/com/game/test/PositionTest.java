@@ -91,4 +91,17 @@ class PositionTest {
 		// neg value if win for o
 	   assertEquals(-6, new Position("oo       ",'o').minmax());
 	}
+	@Test
+	public void testBestMove() throws Exception {
+		assertEquals(2, new Position("xx       ",'x').bestMove());
+		assertEquals(2, new Position("oo       ",'o').bestMove());
+	}
+	@Test
+	public void testIsGameOver() throws Exception
+	{
+		assertFalse(new Position().isGameOver());
+		assertTrue(new Position("xxx      ",'x').isGameOver());
+		assertTrue(new Position("ooo      ",'x').isGameOver());
+		assertTrue(new Position("xoxxoxoxo",'x').isGameOver());
+	}
 }
